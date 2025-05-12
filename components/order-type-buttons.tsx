@@ -21,13 +21,17 @@ const OrderTypeButtons: React.FC<OrderTypeButtonsProps> = ({ themeColors, onDine
         <div className="border-t pt-4 mt-4" style={{ borderColor: `${themeColors?.primary_color}30` }}>
             <p className="text-sm text-center mb-3 font-medium" style={{color: themeColors?.text_color}}>اختر طريقة الطلب:</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-3">
-                <button
-                    className="w-full py-2 md:py-2 rounded-lg font-semibold text-sm md:text-base"
-                    style={{ backgroundColor: themeColors?.primary_color, color: themeColors?.accent_color }}
-                    onClick={onDineIn}
-                >
-                    تناول هنا
-                </button>
+                {
+                    shop?.business_info.has_dine_in && (
+                        <button
+                            className="w-full py-2 md:py-2 rounded-lg font-semibold text-sm md:text-base"
+                            style={{ backgroundColor: themeColors?.primary_color, color: themeColors?.accent_color }}
+                            onClick={onDineIn}
+                        >
+                            تناول هنا
+                        </button>
+                    )
+                }
                 <div className="flex items-center gap-x-2">
                 {
                     shop?.business_info.has_takeaway && (

@@ -125,7 +125,7 @@ const EMenuPage: React.FC = () => {
         console.log("Takeaway Order Submitted:", { name, phone, cart, orderNumber });
         setOrderSuccessDetails({
             isOpen: true,
-            title: 'طلبك جاهز للاستلام!',
+            title: 'برجاء التوجه الي الدفع',
             orderNumber: orderNumber,
             messageLines: ['شكراً لطلبك، ' + name + '.', 'برجاء التوجه للدفع واستلام طلبك.'],
         });
