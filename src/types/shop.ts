@@ -16,7 +16,7 @@ export interface Shop {
     address_id?: number
     contact_info?: ContactInfo
     contact_info_id?: number
-    social_links?: SocialLink[]
+    social_links?: SocialLink
     social_links_id?: number
     currency_info: CurrencyInfo
     currency_info_id: number
