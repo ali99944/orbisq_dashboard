@@ -105,10 +105,18 @@ const EMenuPage: React.FC = () => {
         setOrderSuccessDetails({ isOpen: true, title: 'كود الخصم', messageLines: [`جاري تطبيق كود "${couponCode}"... (ميزة قيد التطوير)`] });
     }, []);
 
+
+    const { customer, login, logout } = useAuth();
+
     // --- Order Type Handlers ---
-    const handleInitiateDineIn = () => {
+    const handleInitiateDineIn = async () => {
         if (cart.length === 0) {
             setOrderSuccessDetails({ isOpen: true, title: 'السلة فارغة', messageLines: ['الرجاء إضافة بعض الأصناف أولاً.'] });
+            return;
+        }
+
+        if(customer != null) {
+            handleSubmitDineIn(customer.name, customer.phone);
             return;
         }
 
@@ -117,6 +125,10 @@ const EMenuPage: React.FC = () => {
 
     const handleInitiateTakeaway = () => {
         if (cart.length === 0) { /* ... empty cart check ... */ return; }
+        if(customer != null) {
+            handleSubmitTakeaway(customer.name, customer.phone);
+            return;
+        }
         setIsTakeawayModalOpen(true);
     };
     const handleSubmitTakeaway = (name: string, phone: string) => {
@@ -134,6 +146,16 @@ const EMenuPage: React.FC = () => {
 
     const handleInitiateDelivery = () => {
          if (cart.length === 0) { /* ... empty cart check ... */ return; }
+         if(customer != null) {
+            handleSubmitDelivery({
+                name: customer.name,
+                phone: customer.phone,
+                location: '',
+                landmark: '',
+                notes: '',
+            });
+            return;
+        }
         setIsDeliveryModalOpen(true);
     };
     const handleSubmitDelivery = (details: { name: string; phone: string; location: string; landmark: string; notes?: string }) => {
@@ -149,7 +171,6 @@ const EMenuPage: React.FC = () => {
         setCart([]);
     };
 
-    const { login, customer, logout } = useAuth()
 
     const handleSubmitDineIn = (name: string, phone: string) => {
         console.log("Dine-In Order Submitted:", cart);
