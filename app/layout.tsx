@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ReactQueryProvider from "@/src/providers/query-providers";
+import { AuthProvider } from "@/src/contexts/auth_context";
 
 
 export const metadata: Metadata = {
@@ -19,9 +20,11 @@ export default function RootLayout({
       <body
         className={`bg-white text-black antialiased`}
       >
-        <ReactQueryProvider>
-        {children}
-        </ReactQueryProvider>
+        <AuthProvider>
+          <ReactQueryProvider>
+            {children}
+          </ReactQueryProvider>
+        </AuthProvider>
       </body>
     </html>
   );

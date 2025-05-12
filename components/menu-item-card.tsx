@@ -16,13 +16,13 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAddToCart, themeCol
     const isAvailable = item.is_active
     return (
         <div className={`rounded-lg overflow-hidden flex flex-col h-full transition-all duration-300 ease-in-out ${!isAvailable ? 'opacity-60' : 'border border-gray-300'}`}
-             style={{ borderColor: themeColors?.secondary_color, backgroundColor: isAvailable ? themeColors?.accent_color : '#E9E9E9' }}>
-            <div className="relative w-full aspect-[4/3]"> {/* Maintain aspect ratio for responsiveness */}
+             style={{ borderColor: themeColors?.primary_color + '40',  backgroundColor: isAvailable ? 'transparent' : '#E9E9E9', boxShadow: isAvailable ? `0 2px 4px ${themeColors?.accent_color}` : 'none' }}>
+            <div className="relative w-full aspect-[3/3]"> {/* Maintain aspect ratio for responsiveness */}
                 <Image src={getImageLink(item?.image) ?? ''} alt={item.name} layout="fill" objectFit="cover" className={`rounded-t-lg ${!isAvailable ? 'filter grayscale' : ''}`} />
                 {!isAvailable && <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-lg"><span className="text-white font-semibold text-xs px-2 py-1 bg-red-600 rounded">غير متوفر</span></div>}
             </div>
             <div className="p-2 md:p-3 flex flex-col flex-grow"> {/* Responsive padding */}
-                <h3 className="text-sm md:text-base font-semibold mb-0.5 truncate" style={{ color: themeColors?.accent_color }}>{item.name}</h3>
+                <h3 className="text-sm md:text-base font-semibold mb-0.5 truncate" style={{ color: themeColors?.primary_color }}>{item.name}</h3>
                 <p className="text-xs md:text-sm text-gray-500 mb-1 truncate" style={{color: themeColors?.text_color, opacity: 0.7}}>{item.name}</p>
                 <p className="text-base md:text-lg font-bold mb-2" style={{ color: themeColors?.primary_color }}>${(item.price ?? 0).toFixed(2)}</p>
                 {isAvailable ? (

@@ -27,10 +27,10 @@ const DeliveryOrderModal: React.FC<DeliveryOrderModalProps> = ({ isOpen, onClose
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" dir="rtl" onClick={onClose}>
+        <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center p-4 z-40" dir="rtl" onClick={onClose}>
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-5 md:p-6 max-h-[90vh] overflow-y-auto" style={{ backgroundColor: themeColors?.secondary_color }} onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg md:text-xl font-semibold" style={{color: themeColors?.accent_color}}>طلب توصيل</h3>
+                    <h3 className="text-lg md:text-xl font-semibold" style={{color: themeColors?.text_color}}>طلب توصيل</h3>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                         <XCircle size={24} />
                     </button>
@@ -74,7 +74,7 @@ const DeliveryOrderModal: React.FC<DeliveryOrderModalProps> = ({ isOpen, onClose
                          <textarea id="delivery-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="w-full p-2 border rounded-md text-sm focus:ring-1" style={{ borderColor: `${themeColors?.primary_color}80`, color: themeColors?.text_color, outlineColor: themeColors?.primary_color }}></textarea>
                     </div>
 
-                    <button type="submit" className="w-full py-2.5 md:py-3 rounded-lg text-white font-semibold text-sm md:text-base" style={{backgroundColor: themeColors?.primary_color}}>
+                    <button type="submit" className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base" style={{backgroundColor: themeColors?.primary_color, color: themeColors?.accent_color}}>
                         تأكيد طلب التوصيل
                     </button>
                 </form>

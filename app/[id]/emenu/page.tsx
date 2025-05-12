@@ -1,9 +1,9 @@
 // src/app/restaurants/[id]/emenu/page.tsx
 "use client";
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { WifiOff } from 'lucide-react';
+import { Phone, User, WifiOff } from 'lucide-react';
 import BottomNavigationBar from '@/components/bottom-navigation-bar';
 import CategoryTabs from '@/components/category-tabs';
 import CartContentPane from '@/components/content-panes/cart-content-pane';
@@ -18,16 +18,19 @@ import { MenuItem, NavTab } from '@/src/types/emenu';
 import { useGetQuery } from '@/src/hooks/queries-actions';
 import { Shop, ShopTheme } from '@/src/types/shop';
 import { Product } from '@/src/types/product';
+import DineInOrderModal from '@/components/dine-in-order-modal';
+import { useAuth } from '@/src/contexts/auth_context';
 
 const EMenuPage: React.FC = () => {
     const [error] = useState<string | null>(null);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>();
     const [cart, setCart] = useState<MenuItem[]>([]);
     const [activeNavTab, setActiveNavTab] = useState<NavTab>('menu');
 
     // Modal States
     const [isTakeawayModalOpen, setIsTakeawayModalOpen] = useState(false);
     const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
+    const [isDineInModalOpen, setIsDineInModalOpen] = useState(false);
     const [orderSuccessDetails, setOrderSuccessDetails] = useState<{
         isOpen: boolean; title: string; messageLines: (string|React.ReactNode)[]; orderNumber?: string|number;
     } | null>(null);
@@ -36,12 +39,18 @@ const EMenuPage: React.FC = () => {
     const params = useParams();
     const searchParams = useSearchParams();
     const restaurantIdFromParams = params?.id as string;
-    const displayTableNumber = searchParams?.get('table') || "12";
+    const displayTableNumber = searchParams?.get('desk') || "0";
 
     const { data: shop, isLoading: is_shop_loading } = useGetQuery<Shop>({
         url: `/shops/${restaurantIdFromParams}`,
         key: ['shop']
     })
+
+    useEffect(() => {
+        setSelectedCategoryId(
+            (shop?.categories?.length ?? 0) > 0 ? shop?.categories[0].id : null
+        );
+    }, [shop]);
 
     const themeColors = shop?.shop_theme as ShopTheme | null
 
@@ -61,6 +70,8 @@ const EMenuPage: React.FC = () => {
             }
             return [...prevCart, { product: itemToAdd, quantity: 1 }];
         });
+
+        setOrderSuccessDetails({ isOpen: true, title: 'تمت الاضافة', messageLines: [`${itemToAdd.name} تمت الاضافة بنجاح.`] });
     }, []);
 
     const handleIncreaseQuantity = useCallback((itemId: number) => {
@@ -100,14 +111,8 @@ const EMenuPage: React.FC = () => {
             setOrderSuccessDetails({ isOpen: true, title: 'السلة فارغة', messageLines: ['الرجاء إضافة بعض الأصناف أولاً.'] });
             return;
         }
-        // Process Dine-In Order (e.g., send to kitchen)
-        console.log("Dine-In Order Submitted:", cart);
-        setOrderSuccessDetails({
-            isOpen: true,
-            title: 'تم استلام طلبك!',
-            messageLines: ['يتم الآن تحضير طلبك.', 'الوقت المتوقع للتحضير: 15-20 دقيقة.'],
-        });
-        setCart([]); // Clear cart after order
+
+        setIsDineInModalOpen(true);
     };
 
     const handleInitiateTakeaway = () => {
@@ -144,6 +149,19 @@ const EMenuPage: React.FC = () => {
         setCart([]);
     };
 
+    const { login, customer, logout } = useAuth()
+
+    const handleSubmitDineIn = (name: string, phone: string) => {
+        console.log("Dine-In Order Submitted:", cart);
+        setOrderSuccessDetails({
+            isOpen: true,
+            title: 'تم استلام طلبك!',
+            messageLines: ['يتم الآن تحضير طلبك.', 'الوقت المتوقع للتحضير: 15-20 دقيقة.'],
+        });
+        setCart([]);
+        login(name, phone);
+    }
+
 
     const filteredMenuItems = useMemo(() => {
         return shop?.products.filter(item => item?.product_category?.id === selectedCategoryId);
@@ -177,7 +195,30 @@ const EMenuPage: React.FC = () => {
                         </div>
                     </>
                 )}
-                {activeNavTab === 'orders' && <OrdersContentPane themeColors={shop?.shop_theme as ShopTheme | null} />}
+                {activeNavTab === 'orders' && (
+                    <div>
+                        {
+                            customer && (
+                                <div className="flex items-center justify-between gap-2 mt-4">
+                            <div className="flex items-center gap-2">
+                                <User className="w-4 h-4" />
+                                <span className="text-sm">{customer?.name}</span>
+                                <Phone className="w-4 h-4" />
+                                <span className="text-sm">{customer?.phone}</span>
+                            </div>
+                            <div>
+                                <button onClick={logout} className="px-2 py-1 rounded-md text-white hover:opacity-90 transition-opacity" style={{ backgroundColor: themeColors?.primary_color }}>
+                                    الخروج
+                                </button>
+
+                            </div>
+                        </div>
+                            )
+                        }
+                        
+                        <OrdersContentPane themeColors={shop?.shop_theme as ShopTheme | null} />
+                    </div>
+                )}
                 {activeNavTab === 'cart' &&
                     <CartContentPane
                         cartItems={cart}
@@ -200,6 +241,9 @@ const EMenuPage: React.FC = () => {
             }
             {isDeliveryModalOpen &&
                 <DeliveryOrderModal isOpen={isDeliveryModalOpen} onClose={() => setIsDeliveryModalOpen(false)} onSubmit={handleSubmitDelivery} themeColors={themeColors} />
+            }
+            {isDineInModalOpen &&
+                <DineInOrderModal isOpen={isDineInModalOpen} onClose={() => setIsDineInModalOpen(false)} onSubmit={handleSubmitDineIn} themeColors={themeColors} />
             }
             {orderSuccessDetails?.isOpen &&
                 <OrderSuccessDisplay

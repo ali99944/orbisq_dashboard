@@ -36,7 +36,7 @@ const CouponInput: React.FC<CouponInputProps> = ({ themeColors, onApplyCoupon })
                 <button
                     type="submit"
                     className="px-4 py-2 md:px-5 md:py-2.5 rounded-md text-white font-semibold text-xs md:text-sm"
-                    style={{ backgroundColor: themeColors?.primary_color, color: themeColors?.text_color }}
+                    style={{ backgroundColor: themeColors?.primary_color, color: themeColors?.accent_color }}
                     disabled={!couponCode.trim()}
                 >
                     تطبيق

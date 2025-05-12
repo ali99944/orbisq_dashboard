@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Plus, Minus, X } from 'lucide-react';
 import { MenuItem } from '@/src/types/emenu';
 import { ShopTheme } from '@/src/types/shop';
+import { getImageLink } from '@/src/storage';
 
 interface CartItemProps {
     item: MenuItem;
@@ -17,9 +18,9 @@ const CartItem: React.FC<CartItemProps> = ({ item, themeColors, onIncreaseQuanti
     return (
         <div className="flex items-center justify-between p-2 md:p-3 rounded-lg" style={{ backgroundColor: `${themeColors?.primary_color}10`, border: `1px solid ${themeColors?.primary_color}30`}}>
             <div className="flex items-center gap-2 md:gap-3 flex-grow">
-                <Image src={item.product.image ?? ''} alt={item.product.name} width={50} height={50} className="rounded-md object-cover w-[50px] h-[50px] md:w-[60px] md:h-[60px]" />
+                <Image src={getImageLink(item.product.image) ?? ''} alt={item.product.name} width={50} height={50} className="rounded-md object-cover w-[50px] h-[50px] md:w-[60px] md:h-[60px]" />
                 <div className="flex-grow">
-                    <h3 className="text-sm md:text-base font-semibold" style={{color: themeColors?.accent_color}}>{item.product.name}</h3>
+                    <h3 className="text-sm md:text-base font-semibold" style={{color: themeColors?.primary_color}}>{item.product.name}</h3>
                     <p className="text-xs md:text-sm" style={{color: themeColors?.primary_color}}>${((item.product.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</p>
                 </div>
             </div>
@@ -28,12 +29,12 @@ const CartItem: React.FC<CartItemProps> = ({ item, themeColors, onIncreaseQuanti
                 <button
                     onClick={() => onIncreaseQuantity(item.product.id)}
                     className="p-1 rounded-full"
-                    style={{ backgroundColor: `${themeColors?.primary_color}30`, color: themeColors?.accent_color }}
+                    style={{ backgroundColor: `${themeColors?.primary_color}`, color: themeColors?.accent_color }}
                     aria-label="Increase quantity"
                 >
                     <Plus size={14} className="md:w-4 md:h-4" />
                 </button>
-                <span className="text-sm md:text-base font-medium w-5 text-center" style={{color: themeColors?.accent_color}}>
+                <span className="text-sm md:text-base font-medium w-5 text-center" style={{color: themeColors?.primary_color}}>
                     {(item.quantity ?? 0)}
                 </span>
                 {(item.quantity ?? 0) > 1 ? (

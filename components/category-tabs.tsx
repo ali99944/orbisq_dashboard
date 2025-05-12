@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 
 interface CategoryTabsProps {
-    selectedCategoryId: number | null;
+    selectedCategoryId: number | null | undefined;
     onSelectCategory: (categoryId: number) => void;
     themeColors: ShopTheme | null;
 }
@@ -26,9 +26,9 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({ selectedCategoryId, onSelec
                 <button key={category?.id} onClick={() => onSelectCategory(category?.id)}
                         className={`px-4 md:px-5 py-2 text-xs md:text-sm font-semibold rounded-lg whitespace-nowrap transition-all duration-200 ease-in-out shadow-sm flex-shrink-0`}
                         style={{
-                            backgroundColor: selectedCategoryId === category?.id ? themeColors?.accent_color : themeColors?.primary_color,
-                            color: selectedCategoryId === category?.id ? themeColors?.primary_color : themeColors?.text_color,
-                            border: `1px solid ${selectedCategoryId === category?.id ? themeColors?.accent_color : themeColors?.primary_color}`,
+                            backgroundColor: selectedCategoryId === category?.id ? themeColors?.primary_color    : themeColors?.primary_color,
+                            color: selectedCategoryId === category?.id ? themeColors?.accent_color : '#fff',
+                            // border: `1px solid ${selectedCategoryId === category?.id ? themeColors?.accent_color : themeColors?.primary_color}`,
                         }}>
                     {category?.name}
                 </button>

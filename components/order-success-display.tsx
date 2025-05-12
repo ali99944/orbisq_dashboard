@@ -27,7 +27,7 @@ const OrderSuccessDisplay: React.FC<OrderSuccessDisplayProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50" onClick={onClose}>
+        <div className="fixed inset-0 bg-black/30 bg-opacity-60 flex items-center justify-center p-2 z-50" onClick={onClose}>
             <div
                 className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 md:p-8 text-center"
                 style={{ backgroundColor: themeColors?.secondary_color }}
@@ -37,7 +37,7 @@ const OrderSuccessDisplay: React.FC<OrderSuccessDisplayProps> = ({
                     <X size={24} />
                 </button>
                 <CheckCircle2 size={64} className="mx-auto mb-5 md:mb-6" style={{ color: themeColors?.primary_color }} />
-                <h2 className="text-xl md:text-2xl font-bold mb-3" style={{ color: themeColors?.accent_color }}>{title}</h2>
+                <h2 className="text-xl md:text-2xl font-bold mb-3" style={{ color: themeColors?.text_color }}>{title}</h2>
 
                 {orderNumber && (
                     <div className="my-4 p-3 rounded-lg" style={{backgroundColor: `${themeColors?.primary_color}15`, border: `2px dashed ${themeColors?.primary_color}`}}>

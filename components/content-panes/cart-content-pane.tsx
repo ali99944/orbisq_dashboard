@@ -41,7 +41,7 @@ const CartContentPane: React.FC<CartContentPaneProps> = ({
 
     return (
         <div className="p-1 md:p-3">
-            <h2 className="text-xl md:text-2xl font-bold my-4 text-center" style={{ color: themeColors?.accent_color }}>محتويات السلة</h2>
+            <h2 className="text-xl md:text-2xl font-bold my-4 text-center underline" style={{ color: themeColors?.primary_color }}>محتويات السلة</h2>
             <div className="space-y-2 mb-4 max-h-[calc(100vh-450px)] md:max-h-[calc(100vh-500px)] overflow-y-auto px-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                 {cartItems.map((item) => (
                     <CartItem
@@ -70,7 +70,7 @@ const CartContentPane: React.FC<CartContentPaneProps> = ({
                 onDelivery={onInitiateDelivery}
             />
 
-            <button onClick={onClearCart} className="w-full mt-3 py-2 rounded-lg text-xs md:text-sm" style={{color: themeColors?.accent_color, border: `1px solid ${themeColors?.accent_color}50`}}>
+            <button onClick={onClearCart} className="w-full mt-3 py-2.5 rounded-lg text-xs md:text-sm" style={{color: 'white', backgroundColor: '#720026'}}>
                 إفراغ السلة
             </button>
         </div>
