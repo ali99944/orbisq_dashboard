@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Coffee } from 'lucide-react';
 import { Product } from '@/src/types/product';
 import { ShopTheme } from '@/src/types/shop';
+import { getImageLink } from '@/src/storage';
 
 interface MenuItemCardProps {
     item: Product;
@@ -17,7 +18,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAddToCart, themeCol
         <div className={`rounded-lg overflow-hidden flex flex-col h-full transition-all duration-300 ease-in-out ${!isAvailable ? 'opacity-60' : 'border border-gray-300'}`}
              style={{ borderColor: themeColors?.secondary_color, backgroundColor: isAvailable ? themeColors?.accent_color : '#E9E9E9' }}>
             <div className="relative w-full aspect-[4/3]"> {/* Maintain aspect ratio for responsiveness */}
-                <Image src={item?.image ?? ''} alt={item.name} layout="fill" objectFit="cover" className={`rounded-t-lg ${!isAvailable ? 'filter grayscale' : ''}`} />
+                <Image src={getImageLink(item?.image) ?? ''} alt={item.name} layout="fill" objectFit="cover" className={`rounded-t-lg ${!isAvailable ? 'filter grayscale' : ''}`} />
                 {!isAvailable && <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-lg"><span className="text-white font-semibold text-xs px-2 py-1 bg-red-600 rounded">غير متوفر</span></div>}
             </div>
             <div className="p-2 md:p-3 flex flex-col flex-grow"> {/* Responsive padding */}
