@@ -15,7 +15,7 @@ import OrderSuccessDisplay from '@/components/order-success-display';
 import EMenuPageSkeleton from '@/components/page-skeleton';
 import TakeawayOrderModal from '@/components/takeaway-order-modal';
 import { MenuItem, NavTab } from '@/src/types/emenu';
-import { useGetQuery } from '@/src/hooks/queries-actions';
+import { useGetQuery, useMutationAction } from '@/src/hooks/queries-actions';
 import { Shop, ShopTheme } from '@/src/types/shop';
 import { Product } from '@/src/types/product';
 import DineInOrderModal from '@/components/dine-in-order-modal';
@@ -46,6 +46,11 @@ const EMenuPage: React.FC = () => {
         key: ['shop']
     })
 
+    const { mutateAsync: createOrder } = useMutationAction({
+        method: 'post',
+        url: 'orders',
+    });
+    
     useEffect(() => {
         setSelectedCategoryId(
             (shop?.categories?.length ?? 0) > 0 ? shop?.categories[0].id : null
@@ -124,66 +129,150 @@ const EMenuPage: React.FC = () => {
     };
 
     const handleInitiateTakeaway = () => {
-        if (cart.length === 0) { /* ... empty cart check ... */ return; }
+        if (cart.length === 0) {
+            return;
+        }
         if(customer != null) {
             handleSubmitTakeaway(customer.name, customer.phone);
             return;
         }
         setIsTakeawayModalOpen(true);
     };
-    const handleSubmitTakeaway = (name: string, phone: string) => {
+    const handleSubmitTakeaway = async (name: string, phone: string) => {
         setIsTakeawayModalOpen(false);
-        const orderNumber = `T-${Math.floor(Math.random() * 10000)}`;
-        console.log("Takeaway Order Submitted:", { name, phone, cart, orderNumber });
-        setOrderSuccessDetails({
-            isOpen: true,
-            title: 'برجاء التوجه الي الدفع',
-            orderNumber: orderNumber,
-            messageLines: ['شكراً لطلبك، ' + name + '.', 'برجاء التوجه للدفع واستلام طلبك.'],
-        });
-        setCart([]);
+        try {
+            const orderData = {
+                shop_id: restaurantIdFromParams,
+                order_type: 'takeaway',
+                takeaway_customer_name: name,
+                takeaway_customer_phone: phone,
+                status: 'pending',
+                payment_status: 'unpaid',
+                items: cart.map(item => ({
+                    product_id: item.product.id,
+                    quantity: item.quantity,
+                    price: item.product.price,
+                    notes: null
+                }))
+            };
+            
+            await createOrder(orderData);
+            const orderNumber = `T-${Math.floor(Math.random() * 10000)}`;
+            // const orderNumber = response?.order_number || `T-${Math.floor(Math.random() * 10000)}`;
+            
+            setOrderSuccessDetails({
+                isOpen: true,
+                title: 'برجاء التوجه الي الدفع',
+                orderNumber: orderNumber,
+                messageLines: ['شكراً لطلبك، ' + name + '.', 'برجاء التوجه للدفع واستلام طلبك.'],
+            });
+            setCart([]);
+        } catch (error) {
+            console.error("Error submitting takeaway order:", error);
+            setOrderSuccessDetails({
+                isOpen: true,
+                title: 'خطأ في الطلب',
+                messageLines: ['حدث خطأ أثناء تقديم طلبك. يرجى المحاولة مرة أخرى.'],
+            });
+        }
+    };
+
+    const handleSubmitDelivery = async (details: { name: string; phone: string; location: string; landmark: string; notes?: string }) => {
+        setIsDeliveryModalOpen(false);
+        try {
+            const orderData = {
+                shop_id: restaurantIdFromParams,
+                order_type: 'delivery',
+                delivery_customer_name: details.name,
+                delivery_customer_phone: details.phone,
+                delivery_address: details.location,
+                notes: details.notes || null,
+                status: 'pending',
+                payment_status: 'unpaid',
+                items: cart.map(item => ({
+                    product_id: item.product.id,
+                    quantity: item.quantity,
+                    price: item.product.price,
+                    notes: null
+                }))
+            };
+            
+            await createOrder(orderData);
+            // const orderNumber = response?.order_number || `D-${Math.floor(Math.random() * 10000)}`;
+            const orderNumber = `D-${Math.floor(Math.random() * 10000)}`;
+            
+            setOrderSuccessDetails({
+                isOpen: true,
+                title: 'تم تأكيد طلب التوصيل!',
+                orderNumber: orderNumber,
+                messageLines: [`شكراً ${details.name}، طلبك في الطريق إليك.`, `سيتم التواصل معك على الرقم: ${details.phone} قريباً.`]
+            });
+            setCart([]);
+        } catch (error) {
+            console.error("Error submitting delivery order:", error);
+            setOrderSuccessDetails({
+                isOpen: true,
+                title: 'خطأ في الطلب',
+                messageLines: ['حدث خطأ أثناء تقديم طلبك. يرجى المحاولة مرة أخرى.'],
+            });
+        }
     };
 
     const handleInitiateDelivery = () => {
-         if (cart.length === 0) { /* ... empty cart check ... */ return; }
-         if(customer != null) {
-            handleSubmitDelivery({
-                name: customer.name,
-                phone: customer.phone,
-                location: '',
-                landmark: '',
-                notes: '',
+        if (cart.length === 0) { /* ... empty cart check ... */ return; }
+        if(customer != null) {
+           handleSubmitDelivery({
+               name: customer.name,
+               phone: customer.phone,
+               location: '',
+               landmark: '',
+               notes: '',
+           });
+           return;
+       }
+       setIsDeliveryModalOpen(true);
+   };
+
+    const handleSubmitDineIn = async (name: string, phone: string) => {
+        try {
+            const orderData = {
+                shop_id: restaurantIdFromParams,
+                order_type: 'dine_in',
+                customer_name: name,
+                customer_phone: phone,
+                desk_number: displayTableNumber,
+                status: 'pending',
+                payment_status: 'unpaid',
+                items: cart.map(item => ({
+                    product_id: item.product.id,
+                    quantity: item.quantity,
+                    price: item.product.price,
+                    notes: null
+                }))
+            };
+            
+            await createOrder(orderData);
+            // const orderNumber = "response?.order_number";
+            const orderNumber = "t-2";
+            
+            setOrderSuccessDetails({
+                isOpen: true,
+                title: 'تم استلام طلبك!',
+                orderNumber: orderNumber,
+                messageLines: ['يتم الآن تحضير طلبك.', 'الوقت المتوقع للتحضير: 15-20 دقيقة.'],
             });
-            return;
+            setCart([]);
+            login(name, phone);
+        } catch (error) {
+            console.error("Error submitting dine-in order:", error);
+            setOrderSuccessDetails({
+                isOpen: true,
+                title: 'خطأ في الطلب',
+                messageLines: ['حدث خطأ أثناء تقديم طلبك. يرجى المحاولة مرة أخرى.'],
+            });
         }
-        setIsDeliveryModalOpen(true);
     };
-    const handleSubmitDelivery = (details: { name: string; phone: string; location: string; landmark: string; notes?: string }) => {
-        setIsDeliveryModalOpen(false);
-        const orderNumber = `D-${Math.floor(Math.random() * 10000)}`;
-        console.log("Delivery Order Submitted:", { ...details, cart, orderNumber });
-        setOrderSuccessDetails({
-            isOpen: true,
-            title: 'تم تأكيد طلب التوصيل!',
-            orderNumber: orderNumber,
-            messageLines: [`شكراً ${details.name}، طلبك في الطريق إليك.`, `سيتم التواصل معك على الرقم: ${details.phone} قريباً.`]
-        });
-        setCart([]);
-    };
-
-
-    const handleSubmitDineIn = (name: string, phone: string) => {
-        console.log("Dine-In Order Submitted:", cart);
-        setOrderSuccessDetails({
-            isOpen: true,
-            title: 'تم استلام طلبك!',
-            messageLines: ['يتم الآن تحضير طلبك.', 'الوقت المتوقع للتحضير: 15-20 دقيقة.'],
-        });
-        setCart([]);
-        login(name, phone);
-    }
-
-
+    
     const filteredMenuItems = useMemo(() => {
         return shop?.products.filter(item => item?.product_category?.id === selectedCategoryId);
     }, [selectedCategoryId, shop?.products]);

@@ -37,7 +37,7 @@ const BrandIdentityPage: React.FC = () => {
     const params = useParams();
     const searchParams = useSearchParams();
     const shop_id = Array.isArray(params?.id) ? params.id[0] : params?.id;
-    const tableNumber = searchParams?.get('table');
+    const deskNumber = searchParams?.get('desk');
 
     const { data: shop, isLoading } = useGetQuery<Shop>({
         url: `/shops/${shop_id}`,
@@ -67,10 +67,11 @@ const BrandIdentityPage: React.FC = () => {
     }, [shop]);
 
     // --- Construct Links for Actions ---
-    const eMenuLink = shop ? `/${shop.id}/emenu${tableNumber ? `?table=${tableNumber}` : ''}` : '#';
-    const requestServiceLink = shop ? `/${shop.id}/request-service${tableNumber ? `?table=${tableNumber}` : ''}` : '#';
+    const eMenuLink = shop ? `/${shop.id}/emenu${deskNumber ? `?table=${deskNumber}` : ''}` : '#';
+    const requestServiceLink = shop ? `/${shop.id}/request-service${deskNumber ? `?table=${deskNumber}` : ''}` : '#';
 
-    console.log(shop);
+    
+
     
 
     // --- Render Loading/Error States ---
@@ -161,7 +162,7 @@ const BrandIdentityPage: React.FC = () => {
                             </button>
                         </Link> */}
                     </div>
-                    {tableNumber && (shop.business_info.has_dine_in || shop.business_info.has_reservation) && ( // Show if table & dine-in/reservation enabled
+                    {deskNumber && (shop.business_info.has_dine_in || shop.business_info.has_reservation) && ( // Show if table & dine-in/reservation enabled
                         <Link href={requestServiceLink} className="block w-full">
                             <button
                                 className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border text-sm font-medium shadow-sm transition-all duration-150 ease-out hover:shadow-md active:scale-[0.97]"
