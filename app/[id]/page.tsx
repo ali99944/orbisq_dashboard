@@ -67,7 +67,7 @@ const BrandIdentityPage: React.FC = () => {
     }, [shop]);
 
     // --- Construct Links for Actions ---
-    const eMenuLink = shop ? `/${shop.id}/emenu${deskNumber ? `?table=${deskNumber}` : ''}` : '#';
+    const eMenuLink = shop ? `/${shop.id}/emenu${deskNumber ? `?desk=${deskNumber}` : ''}` : '#';
     const requestServiceLink = shop ? `/${shop.id}/request-service${deskNumber ? `?table=${deskNumber}` : ''}` : '#';
 
     
