@@ -62,16 +62,18 @@ const OrdersContentPane: React.FC<OrdersContentPaneProps> = ({ themeColors }) =>
     // --- Fetching Orders ---
     // TODO: Ensure this endpoint fetches orders for the *current customer*
     // It might need to send an auth token or session ID.
-    const { data: ordersResponse, isLoading: isLoadingOrders, isError, error } = useGetQuery<{ data: Order[] }>({
+    const { data: orders, isLoading: isLoadingOrders, isError, error } = useGetQuery<Order[]>({
         url: 'orders', // Example customer-specific endpoint
         key: ['customerOrders'],
         // Add options like polling if you want live updates, or rely on Pusher
     });
-    const orders = ordersResponse?.data || [];
+
+    console.log(orders);
+    
 
     // Sort orders by date, newest first (assuming placed_at or created_at)
     const sortedOrders = useMemo(() => {
-        return [...orders].sort((a, b) => new Date(b.placed_at || b.created_at).getTime() - new Date(a.placed_at || a.created_at).getTime());
+        return [...(orders ?? [])].sort((a, b) => new Date(b.placed_at || b.created_at).getTime() - new Date(a.placed_at || a.created_at).getTime());
     }, [orders]);
 
     const handleOrderClick = (order: Order) => {

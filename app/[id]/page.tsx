@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Phone, Instagram, Twitter, Facebook, Youtube, Utensils, Bell, WifiOff, ExternalLink, Linkedin } from 'lucide-react';
+import { Phone, Instagram, Twitter, Facebook, Youtube, Utensils, WifiOff, ExternalLink, Linkedin } from 'lucide-react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useGetQuery } from '@/src/hooks/queries-actions';
 import { Shop } from '@/src/types/shop';
@@ -68,7 +68,7 @@ const BrandIdentityPage: React.FC = () => {
 
     // --- Construct Links for Actions ---
     const eMenuLink = shop ? `/${shop.id}/emenu${deskNumber ? `?desk=${deskNumber}` : ''}` : '#';
-    const requestServiceLink = shop ? `/${shop.id}/request-service${deskNumber ? `?table=${deskNumber}` : ''}` : '#';
+    // const requestServiceLink = shop ? `/${shop.id}/request-service${deskNumber ? `?table=${deskNumber}` : ''}` : '#';
 
     
 
@@ -162,7 +162,7 @@ const BrandIdentityPage: React.FC = () => {
                             </button>
                         </Link> */}
                     </div>
-                    {deskNumber && (shop.business_info.has_dine_in || shop.business_info.has_reservation) && ( // Show if table & dine-in/reservation enabled
+                    {/* {deskNumber && (shop.business_info.has_dine_in || shop.business_info.has_reservation) && ( // Show if table & dine-in/reservation enabled
                         <Link href={requestServiceLink} className="block w-full">
                             <button
                                 className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border text-sm font-medium shadow-sm transition-all duration-150 ease-out hover:shadow-md active:scale-[0.97]"
@@ -172,7 +172,7 @@ const BrandIdentityPage: React.FC = () => {
                                 طلب مساعدة من النادل
                             </button>
                         </Link>
-                    )}
+                    )} */}
                 </div>
 
                 {/* Contact & Socials */}

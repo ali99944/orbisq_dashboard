@@ -109,15 +109,15 @@ const OrderDetailSheet: React.FC<OrderDetailSheetProps> = ({
 
                             {/* Order Items */}
                             <div className="border-t pt-4">
-                                <h3 className="font-semibold text-gray-700 mb-2">الأصناف المطلوبة ({order.items.length})</h3>
+                                <h3 className="font-semibold text-gray-700 mb-2">الأصناف المطلوبة ({order.order_items.length})</h3>
                                 <div className="divide-y divide-gray-100 max-h-60 overflow-y-auto pr-1 -mr-1"> {/* Indent scrollbar slightly */}
-                                    {order.items.map(item => (
+                                    {order.order_items.map(item => (
                                         <div key={item.id} className="flex items-center py-2.5">
-                                            {item.product.image && (
-                                                <img src={getImageLink(item.product.image)} alt={item.product.name} className="w-12 h-12 object-cover rounded-md ml-3 flex-shrink-0" />
+                                            {item.product?.image && (
+                                                <img src={getImageLink(item.product?.image)} alt={item.product?.name} className="w-12 h-12 object-cover rounded-md ml-3 flex-shrink-0" />
                                             )}
                                             <div className="flex-1">
-                                                <p className="font-medium text-gray-800">{item.product.name}</p>
+                                                <p className="font-medium text-gray-800">{item.product?.name}</p>
                                                 {item.variant_options && Object.values(item.variant_options).join(', ') && (
                                                     <p className="text-xs text-gray-500">({Object.values(item.variant_options).join(' / ')})</p>
                                                 )}

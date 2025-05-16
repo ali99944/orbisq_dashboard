@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ReactQueryProvider from "@/src/providers/query-providers";
 import { AuthProvider } from "@/src/contexts/auth_context";
+import { SocketProvider } from "@/src/providers/socket-provider";
 
 
 export const metadata: Metadata = {
@@ -22,7 +23,9 @@ export default function RootLayout({
       >
         <AuthProvider>
           <ReactQueryProvider>
-            {children}
+            <SocketProvider>
+              {children}
+            </SocketProvider>
           </ReactQueryProvider>
         </AuthProvider>
       </body>

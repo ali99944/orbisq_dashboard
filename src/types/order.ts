@@ -28,7 +28,7 @@ export interface Order {
 //   waiter?: User;
 //   chef_id?: number;
 //   chef?: User;
-  items: OrderItem[];
+  order_items: OrderItem[];
   subtotal: number;
   tax_amount: number;
   discount_amount: number;
