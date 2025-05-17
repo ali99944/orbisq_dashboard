@@ -261,7 +261,7 @@ const EMenuPage: React.FC = () => {
                         messageLines: ['يتم الآن تحضير طلبك.', 'الوقت المتوقع للتحضير: 15-20 دقيقة.'],
                     });
                     setCart([]);
-                    login(name, phone);
+                    login(phone, name);
                 },
             });
         } catch (error) {

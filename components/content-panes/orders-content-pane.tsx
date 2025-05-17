@@ -61,11 +61,16 @@ const OrdersContentPane: React.FC<OrdersContentPaneProps> = ({ themeColors }) =>
     }); // For currency if needed
 
     const { customer } = useAuth()
+    console.log(customer);
+    
     const { data: orders, isLoading: isLoadingOrders, isError, error } = useGetQuery<Order[]>({
         url: `orders/phone/${customer?.phone}`, // Example customer-specific endpoint
         key: ['customerOrders'],
         // Add options like polling if you want live updates, or rely on Pusher
     });
+
+    console.log(orders);
+    
     
 
     // Sort orders by date, newest first (assuming placed_at or created_at)
