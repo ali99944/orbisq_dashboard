@@ -25,6 +25,7 @@ import { Order } from '@/src/types/order';
 const EMenuPage: React.FC = () => {
     const [error] = useState<string | null>(null);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>();
+    const [searchTerm, setSearchTerm] = useState<string>('');
     const [cart, setCart] = useState<MenuItem[]>([]);
     const [activeNavTab, setActiveNavTab] = useState<NavTab>('menu');
 
@@ -300,9 +301,18 @@ const EMenuPage: React.FC = () => {
             <main className="flex-grow p-3 pt-0 overflow-y-auto scrollbar-thin">
                 {activeNavTab === 'menu' && (
                     <>
-                        <CategoryTabs selectedCategoryId={selectedCategoryId} onSelectCategory={handleSelectCategory} themeColors={themeColors} />
+                        <CategoryTabs selectedCategoryId={selectedCategoryId} onSelectCategory={(categoryId) => {
+                            handleSelectCategory(categoryId);
+                            setSearchTerm(''); // Clear search when changing category
+                        }} themeColors={themeColors} />
                         <div className="mt-3">
-                           <MenuContentPane filteredMenuItems={filteredMenuItems ?? []} handleAddToCart={handleAddToCart} themeColors={themeColors} />
+                           <MenuContentPane 
+                              filteredMenuItems={filteredMenuItems ?? []} 
+                              handleAddToCart={handleAddToCart} 
+                              themeColors={themeColors}
+                              searchTerm={searchTerm}
+                              onSearchChange={setSearchTerm}
+                           />
                         </div>
                     </>
                 )}

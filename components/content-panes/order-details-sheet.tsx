@@ -86,7 +86,7 @@ const OrderDetailSheet: React.FC<OrderDetailSheetProps> = ({
                             {/* Basic Info */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <InfoItem icon={Calendar} label="تاريخ الطلب" value={formatOrderDateTime(order.placed_at || order.created_at)} />
-                                <InfoItem icon={ShoppingBag} label="نوع الطلب" value={formatOrderType(order.order_type)} />
+                                <InfoItem icon={ShoppingBag} label="نوع الطلب" value={formatOrderType(order.order_type.toString() as unknown as string)} />
                                 {order.order_type.toString() === 'dine_in' && order.desk?.desk_number && <InfoItem icon={Table} label="رقم الطاولة" value={String(order.desk.desk_number)} />}
                             </div>
 
@@ -117,14 +117,34 @@ const OrderDetailSheet: React.FC<OrderDetailSheetProps> = ({
                                                 <img src={getImageLink(item.product?.image)} alt={item.product?.name} className="w-12 h-12 object-cover rounded-md ml-3 flex-shrink-0" />
                                             )}
                                             <div className="flex-1">
-                                                <p className="font-medium text-gray-800">{item.product?.name}</p>
-                                                {item.variant_options && Object.values(item.variant_options).join(', ') && (
-                                                    <p className="text-xs text-gray-500">({Object.values(item.variant_options).join(' / ')})</p>
+                                                <div className="flex items-baseline gap-2 flex-wrap">
+                                                    <p className="font-medium text-gray-800">{item.product?.name}</p>
+                                                    {item.order_item_modifiers?.find(mod => mod.price_adjustment === null) && (
+                                                        <span className="text-sm text-gray-600">({item.order_item_modifiers.find(mod => mod.price_adjustment === null)?.name})</span>
+                                                    )}
+                                                </div>
+                                                {item.order_item_modifiers?.some(mod => mod.price_adjustment !== null) && (
+                                                    <div className="mt-1 space-y-0.5">
+                                                        {item.order_item_modifiers
+                                                            .filter(mod => mod.price_adjustment !== null)
+                                                            .map((mod, idx) => (
+                                                                <div key={idx} className="flex gap-x-2 text-xs">
+                                                                    <span className="text-gray-500 flex flex-row-reverse items-center gap-1">
+                                                                         <span>{mod.name}</span>
+                                                                    </span>
+                                                                    -
+                                                                    {(mod?.price_adjustment ?? 0) > 0 && (
+                                                                        <span className="text-gray-600">+{formatPrice(mod?.price_adjustment ?? 0)}</span>
+                                                                    )}
+                                                                </div>
+                                                            ))
+                                                        }
+                                                    </div>
                                                 )}
-                                                <p className="text-xs text-gray-500">الكمية: {item.quantity}</p>
+                                                <p className="text-xs text-gray-500 mt-1">الكمية: {item.quantity}</p>
                                             </div>
                                             <div className="text-left font-semibold text-gray-700">
-                                                {formatPrice(item.total_price)}
+                                                {formatPrice((item.quantity * (item.product?.price || 0)) + (item.order_item_modifiers?.reduce((sum, mod) => sum + (mod.price_adjustment || 0) * item.quantity, 0) || 0))}
                                             </div>
                                         </div>
                                     ))}
@@ -134,18 +154,18 @@ const OrderDetailSheet: React.FC<OrderDetailSheetProps> = ({
                             {/* Pricing Summary */}
                             <div className="border-t pt-4 space-y-1.5">
                                 <h3 className="font-semibold text-gray-700 mb-2">ملخص الدفع</h3>
-                                <PriceRow label="المجموع الفرعي" value={formatPrice(order.subtotal)} />
+                                <PriceRow label="المجموع الفرعي" value={formatPrice(order.order_items.reduce((sum, item) => sum + (item.quantity * (item.product?.price || 0)) + (item.order_item_modifiers?.reduce((modSum, mod) => modSum + (mod.price_adjustment || 0) * item.quantity, 0) || 0), 0))} />
                                 {order.discount_amount > 0 && <PriceRow label="الخصم" value={`-${formatPrice(order.discount_amount)}`} className="text-red-600" />}
                                 <PriceRow label="ضريبة القيمة المضافة" value={formatPrice(order.tax_amount)} />
                                 {order.delivery_fee && order.delivery_fee > 0 && <PriceRow label="رسوم التوصيل" value={formatPrice(order.delivery_fee)} />}
                                 {order.service_charge && order.service_charge > 0 && <PriceRow label="رسوم خدمة" value={formatPrice(order.service_charge)} />}
-                                <PriceRow label="الإجمالي الكلي" value={formatPrice(order.total)} isTotal={true} primaryColor={themeColors?.primary_color} />
+                                <PriceRow label="الإجمالي الكلي" value={formatPrice(order.order_items.reduce((sum, item) => sum + (item.quantity * (item.product?.price || 0)) + (item.order_item_modifiers?.reduce((modSum, mod) => modSum + (mod.price_adjustment || 0) * item.quantity, 0) || 0), 0) + (order.tax_amount || 0) + (order.delivery_fee || 0) + (order.service_charge || 0) - (order.discount_amount || 0))} isTotal={true} primaryColor={themeColors?.primary_color} />
                             </div>
 
                             {/* Payment Details */}
                             <div className="border-t pt-4">
                                 <h3 className="font-semibold text-gray-700 mb-2">الدفع</h3>
-                                <InfoItem icon={Receipt} label="حالة الدفع" value={order.payment_status ? String(order.payment_status) : 'غير مدفوع'} />
+                                <InfoItem icon={Receipt} label="حالة الدفع" value={order.payment_status ? String(order.payment_status) == 'unpaid' ? 'مدفوع' : 'غير مدفوع' : 'غير مدفوع'} />
                                 {order.payment_method && <InfoItem icon={CreditCard} label="طريقة الدفع" value={String(order.payment_method)} />}
                             </div>
 

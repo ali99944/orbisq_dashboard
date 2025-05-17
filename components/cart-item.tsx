@@ -40,13 +40,13 @@ const CartItem: React.FC<CartItemProps> = ({ item, themeColors, onIncreaseQuanti
                             {item.product.selectedModifiers
                                 .filter(modifier => modifier.price_adjustment !== null)
                                 .map((modifier, index) => (
-                                    <div key={`modifier-${index}`} className="flex items-center justify-between text-xs px-1">
+                                    <div key={`modifier-${index}`} className="flex items-center flex-row-reverse text-xs px-1">
                                         <div className="flex items-center gap-1.5">
-                                            <span className="w-1 h-1 rounded-full opacity-60" style={{ backgroundColor: themeColors?.primary_color }} />
                                             <span style={{color: themeColors?.text_color}}>
                                                 {modifier.name}
                                             </span>
                                         </div>
+                                        -
                                         {(modifier?.price_adjustment ?? 0) > 0 && (
                                             <span className="font-medium tabular-nums" style={{color: themeColors?.primary_color}}>
                                                 +{(modifier?.price_adjustment ?? 0).toFixed(2)} ج.م

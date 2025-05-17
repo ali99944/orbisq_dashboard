@@ -2,7 +2,6 @@
 import { format } from 'date-fns';
 import { arSA } from 'date-fns/locale';
 import { Package, CookingPot, PackageCheck, Ban, BadgeDollarSign, Truck, Info, Utensils } from 'lucide-react'; // Import relevant icons
-import {  OrderType } from './types/order';
 
 
 export const formatOrderStatus = (status: string | undefined): { text: string; colorClass: string; icon: React.ElementType } => {
@@ -24,11 +23,11 @@ export const formatOrderStatus = (status: string | undefined): { text: string; c
     }
 };
 
-export const formatOrderType = (type: OrderType | undefined): string => {
+export const formatOrderType = (type: string | undefined): string => {
     switch (type) {
-        case OrderType.dine_in: return 'محلي (طاولة)';
-        case OrderType.takeaway: return 'استلام من المطعم';
-        case OrderType.delivery: return 'توصيل للمنزل';
+        case 'dine_in': return 'داخلي (طاولة)';
+        case 'takeaway': return 'استلام من المطعم';
+        case 'delivery': return 'توصيل للمنزل';
         default: return String(type || 'غير محدد');
     }
 };

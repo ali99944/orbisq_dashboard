@@ -37,7 +37,7 @@ const OrderListItem: React.FC<{ order: Order; onClick: () => void; isLatest: boo
                 </span>
             </div>
             <div className="text-xs text-gray-500 space-y-1">
-                <p>النوع: {formatOrderType(order.order_type)}</p>
+                <p>النوع: {formatOrderType(order.order_type as unknown as string)}</p>
                 <p>التاريخ: {formatOrderDateTime(order.placed_at || order.created_at, true)}</p>
             </div>
             <div className="mt-3 pt-2 border-t border-gray-100 flex justify-between items-baseline">

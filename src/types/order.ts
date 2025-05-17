@@ -1,7 +1,7 @@
 import Customer from "./customer";
 import { Desk } from "./desk";
 import { Discount } from "./discount";
-import { Product } from "./product";
+import { Modifier, Product } from "./product";
 import { Shop } from "./shop";
 
 export interface Order {
@@ -67,6 +67,8 @@ export interface OrderItem {
   total_price: number;
   special_requests?: string;
   variant_options?: Record<string, string>;
+
+  order_item_modifiers: Modifier[]
   status: ItemStatus;
   started_at?: Date;
   completed_at?: Date;
