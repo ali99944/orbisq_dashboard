@@ -20,6 +20,7 @@ import { Shop, ShopTheme } from '@/src/types/shop';
 import { Product } from '@/src/types/product';
 import DineInOrderModal from '@/components/dine-in-order-modal';
 import { useAuth } from '@/src/contexts/auth_context';
+import { Order } from '@/src/types/order';
 
 const EMenuPage: React.FC = () => {
     const [error] = useState<string | null>(null);
@@ -73,7 +74,7 @@ const EMenuPage: React.FC = () => {
                     item.product.id === itemToAdd.id ? { ...item, quantity: (item.quantity ?? 0) + 1 } : item
                 );
             }
-            return [...prevCart, { product: itemToAdd, quantity: 1 }];
+            return [...prevCart, { product: itemToAdd, quantity: 1 } as unknown as MenuItem];
         });
 
         setOrderSuccessDetails({ isOpen: true, title: 'تمت الاضافة', messageLines: [`${itemToAdd.name} تمت الاضافة بنجاح.`] });
@@ -152,21 +153,27 @@ const EMenuPage: React.FC = () => {
                     product_id: item.product.id,
                     quantity: item.quantity,
                     price: item.product.price,
-                    notes: null
+                    notes: null,
+                    modifiers: item.product.selectedModifiers
                 }))
             };
             
-            await createOrder(orderData);
-            const orderNumber = `T-${Math.floor(Math.random() * 10000)}`;
-            // const orderNumber = response?.order_number || `T-${Math.floor(Math.random() * 10000)}`;
+            await createOrder(orderData, {
+                onSuccess(data) {
+                    const order = data as unknown as Order
+                    const orderNumber = order?.order_number || `T-${Math.floor(Math.random() * 10000)}`;
+                    
+                    setOrderSuccessDetails({
+                        isOpen: true,
+                        title: 'برجاء التوجه الي الدفع',
+                        orderNumber: orderNumber,
+                        messageLines: ['شكراً لطلبك، ' + name + '.', 'برجاء التوجه للدفع واستلام طلبك.'],
+                    });
+                    setCart([]);
+                }
+            })
             
-            setOrderSuccessDetails({
-                isOpen: true,
-                title: 'برجاء التوجه الي الدفع',
-                orderNumber: orderNumber,
-                messageLines: ['شكراً لطلبك، ' + name + '.', 'برجاء التوجه للدفع واستلام طلبك.'],
-            });
-            setCart([]);
+            
         } catch (error) {
             console.error("Error submitting takeaway order:", error);
             setOrderSuccessDetails({
@@ -193,21 +200,26 @@ const EMenuPage: React.FC = () => {
                     product_id: item.product.id,
                     quantity: item.quantity,
                     price: item.product.price,
-                    notes: null
+                    notes: null,
+                    modifiers: item.product.selectedModifiers
                 }))
             };
             
-            await createOrder(orderData);
-            // const orderNumber = response?.order_number || `D-${Math.floor(Math.random() * 10000)}`;
-            const orderNumber = `D-${Math.floor(Math.random() * 10000)}`;
+            await createOrder(orderData, {
+                onSuccess(data) {
+                    const order = data as unknown as Order
+                    const orderNumber = order?.order_number || `D-${Math.floor(Math.random() * 10000)}`;
             
-            setOrderSuccessDetails({
-                isOpen: true,
-                title: 'تم تأكيد طلب التوصيل!',
-                orderNumber: orderNumber,
-                messageLines: [`شكراً ${details.name}، طلبك في الطريق إليك.`, `سيتم التواصل معك على الرقم: ${details.phone} قريباً.`]
+                    setOrderSuccessDetails({
+                        isOpen: true,
+                        title: 'تم تأكيد طلب التوصيل!',
+                        orderNumber: orderNumber,
+                        messageLines: [`شكراً ${details.name}، طلبك في الطريق إليك.`, `سيتم التواصل معك على الرقم: ${details.phone} قريباً.`]
+                    });
+                    setCart([]);
+                }
             });
-            setCart([]);
+            
         } catch (error) {
             console.error("Error submitting delivery order:", error);
             setOrderSuccessDetails({
@@ -217,21 +229,6 @@ const EMenuPage: React.FC = () => {
             });
         }
     };
-
-    const handleInitiateDelivery = () => {
-        if (cart.length === 0) { /* ... empty cart check ... */ return; }
-        if(customer != null) {
-           handleSubmitDelivery({
-               name: customer.name,
-               phone: customer.phone,
-               location: '',
-               landmark: '',
-               notes: '',
-           });
-           return;
-       }
-       setIsDeliveryModalOpen(true);
-   };
 
     const handleSubmitDineIn = async (name: string, phone: string) => {
         try {
@@ -247,22 +244,26 @@ const EMenuPage: React.FC = () => {
                     product_id: item.product.id,
                     quantity: item.quantity,
                     price: item.product.price,
-                    notes: null
+                    notes: null,
+                    modifiers: item.product.selectedModifiers
                 }))
             };
             
-            await createOrder(orderData);
-            // const orderNumber = "response?.order_number";
-            const orderNumber = "t-2";
+            await createOrder(orderData, {
+                onSuccess(data) {
+                    const order = data as unknown as Order
+                    const orderNumber = order?.order_number;
             
-            setOrderSuccessDetails({
-                isOpen: true,
-                title: 'تم استلام طلبك!',
-                orderNumber: orderNumber,
-                messageLines: ['يتم الآن تحضير طلبك.', 'الوقت المتوقع للتحضير: 15-20 دقيقة.'],
+                    setOrderSuccessDetails({
+                        isOpen: true,
+                        title: 'تم استلام طلبك!',
+                        orderNumber: orderNumber,
+                        messageLines: ['يتم الآن تحضير طلبك.', 'الوقت المتوقع للتحضير: 15-20 دقيقة.'],
+                    });
+                    setCart([]);
+                    login(name, phone);
+                },
             });
-            setCart([]);
-            login(name, phone);
         } catch (error) {
             console.error("Error submitting dine-in order:", error);
             setOrderSuccessDetails({
@@ -340,7 +341,7 @@ const EMenuPage: React.FC = () => {
                         onApplyCoupon={handleApplyCoupon}
                         onInitiateDineIn={handleInitiateDineIn}
                         onInitiateTakeaway={handleInitiateTakeaway}
-                        onInitiateDelivery={handleInitiateDelivery}
+                        onInitiateDelivery={() => {}}
                     />
                 }
             </main>

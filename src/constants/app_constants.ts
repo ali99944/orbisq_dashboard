@@ -3,4 +3,4 @@
 
 
 export const api_url = 'https://server.oorbis.top/api'
-export const storage_url = 'https://server.oorbis.top/public'
+export const storage_url = 'https://server.oorbis.top'

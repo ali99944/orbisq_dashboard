@@ -1,9 +1,12 @@
-import { Product } from "./product";
+import { Modifier, Product } from "./product";
 
 // src/types/emenu.ts
 export interface MenuItem {
-    product: Product
+    product: Product & {
+        selectedModifiers: Modifier[]; // Add this line to indicate selected modifiers
+    }
     quantity?: number; // For cart
+    selectedModifiers?: Modifier[]; // Selected modifiers for this cart item
 }
 
 export interface MenuCategory {

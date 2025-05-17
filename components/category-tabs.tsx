@@ -20,6 +20,9 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({ selectedCategoryId, onSelec
         url: `/shops/${restaurantIdFromParams}/categories`,
         key: ['categories']
     })
+
+    console.log(categories);
+    
     return (
         <div className="flex gap-x-2 rtl:space-x-reverse overflow-x-auto py-3 px-3 sticky top-0 z-20" style={{backgroundColor: themeColors?.background_color}}>
             {categories?.map(category => (

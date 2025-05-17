@@ -2,22 +2,25 @@
 import { format } from 'date-fns';
 import { arSA } from 'date-fns/locale';
 import { Package, CookingPot, PackageCheck, Ban, BadgeDollarSign, Truck, Info, Utensils } from 'lucide-react'; // Import relevant icons
-import { OrderStatus, OrderType } from './types/order';
+import {  OrderType } from './types/order';
 
 
-export const formatOrderStatus = (status: OrderStatus | undefined): { text: string; colorClass: string; icon: React.ElementType } => {
+export const formatOrderStatus = (status: string | undefined): { text: string; colorClass: string; icon: React.ElementType } => {
+    console.log(status);
+    
     switch (status) {
-        case OrderStatus.pending: return { text: 'قيد الانتظار', colorClass: 'bg-yellow-100 text-yellow-700 border-yellow-200', icon: Package };
-        case OrderStatus.confirmed: return { text: 'تم التأكيد', colorClass: 'bg-blue-100 text-blue-700 border-blue-200', icon: Package };
-        case OrderStatus.preparing: return { text: 'قيد التحضير', colorClass: 'bg-orange-100 text-orange-700 border-orange-200', icon: CookingPot };
-        case OrderStatus.ready: return { text: 'جاهز للاستلام/التقديم', colorClass: 'bg-teal-100 text-teal-700 border-teal-200', icon: PackageCheck };
-        case OrderStatus.served: return { text: 'تم التقديم (محلي)', colorClass: 'bg-green-100 text-green-700 border-green-200', icon: Utensils };
-        case OrderStatus.out_for_delivery: return { text: 'في الطريق للتوصيل', colorClass: 'bg-cyan-100 text-cyan-700 border-cyan-200', icon: Truck };
-        case OrderStatus.delivered: return { text: 'تم التوصيل', colorClass: 'bg-green-100 text-green-700 border-green-200', icon: PackageCheck };
-        case OrderStatus.completed: return { text: 'مكتمل', colorClass: 'bg-green-100 text-green-700 border-green-200', icon: PackageCheck };
-        case OrderStatus.cancelled: return { text: 'ملغي', colorClass: 'bg-red-100 text-red-700 border-red-200', icon: Ban };
-        case OrderStatus.refunded: return { text: 'مسترجع', colorClass: 'bg-purple-100 text-purple-700 border-purple-200', icon: BadgeDollarSign };
-        default: return { text: String(status || 'غير معروف'), colorClass: 'bg-gray-100 text-gray-600 border-gray-200', icon: Info };
+        
+        case 'pending': return { text: 'في انتظار التأكيد', colorClass: 'bg-amber-50 text-amber-600 border-amber-200', icon: Package };
+        case 'confirmed': return { text: 'تم تأكيد الطلب', colorClass: 'bg-blue-50 text-blue-600 border-blue-200', icon: Package };
+        case 'preparing': return { text: 'جاري تحضير الطلب', colorClass: 'bg-orange-50 text-orange-600 border-orange-200', icon: CookingPot };
+        case 'ready': return { text: 'الطلب جاهز', colorClass: 'bg-emerald-50 text-emerald-600 border-emerald-200', icon: PackageCheck };
+        case 'served': return { text: 'تم تقديم الطلب', colorClass: 'bg-green-50 text-green-600 border-green-200', icon: Utensils };
+        case 'out_for_delivery': return { text: 'جاري توصيل الطلب', colorClass: 'bg-sky-50 text-sky-600 border-sky-200', icon: Truck };
+        case 'delivered': return { text: 'تم توصيل الطلب', colorClass: 'bg-teal-50 text-teal-600 border-teal-200', icon: PackageCheck };
+        case 'completed': return { text: 'تم إكمال الطلب', colorClass: 'bg-green-50 text-green-600 border-green-200', icon: PackageCheck };
+        case 'cancelled': return { text: 'تم إلغاء الطلب', colorClass: 'bg-red-50 text-red-600 border-red-200', icon: Ban };
+        case 'refunded': return { text: 'تم استرجاع المبلغ', colorClass: 'bg-purple-50 text-purple-600 border-purple-200', icon: BadgeDollarSign };
+        default: return { text: 'حالة غير معروفة', colorClass: 'bg-gray-50 text-gray-600 border-gray-200', icon: Info };
     }
 };
 

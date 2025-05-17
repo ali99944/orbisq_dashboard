@@ -35,14 +35,18 @@ export interface Product {
     stock: number;
     low_stock_threshold?: number;
     sort_order: number;
-    has_variants: boolean;
-    // modifier_groups: ProductModifierGroup[];
-    // addon_groups: ProductAddonGroup[];
+    modifiers: Modifier[]
     shop_id?: number;
     shop?: Shop;
     created_at: Date;
     updated_at: Date;
     coupons: Coupon[];
+}
+
+export interface Modifier {
+    // id: number;
+    name: string;
+    price_adjustment: number | null;
 }
 
 enum PricingType {

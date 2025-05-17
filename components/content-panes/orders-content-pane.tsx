@@ -7,6 +7,7 @@ import { formatOrderStatus, formatOrderType, formatOrderDateTime } from '@/src/u
 import OrderDetailSheet from './order-details-sheet';
 import { useParams } from 'next/navigation';
 import { Shop, ShopTheme } from '@/src/types/shop';
+import { useAuth } from '@/src/contexts/auth_context';
 
 interface OrdersContentPaneProps {
     themeColors: ShopTheme | null;
@@ -14,13 +15,13 @@ interface OrdersContentPaneProps {
 
 // Order Card Component (for the list)
 const OrderListItem: React.FC<{ order: Order; onClick: () => void; isLatest: boolean; themeColors: ShopTheme | null }> = ({ order, onClick, isLatest, themeColors }) => {
-    const statusInfo = formatOrderStatus(order.status);
+    const statusInfo = formatOrderStatus(order.status as unknown as string);
     const currency = order.shop?.currency_info.currency_code || 'ج.م'; // Get currency from shop object if available
 
     return (
         <button // Make the whole card clickable
             onClick={onClick}
-            className={`w-full text-right bg-white p-4 rounded-lg border transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+            className={`w-full text-right bg-white p-4 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 ${
                 isLatest
                     ? `border-2 ring-1 ring-offset-0 shadow-lg`
                     : 'border-gray-200 hover:border-gray-300'
@@ -28,7 +29,7 @@ const OrderListItem: React.FC<{ order: Order; onClick: () => void; isLatest: boo
             style={{ borderColor: isLatest ? themeColors?.primary_color : undefined }}
         >
             <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-semibold" style={{ color: themeColors?.accent_color }}>
+                <span className="text-sm font-semibold" style={{ color: themeColors?.primary_color }}>
                     طلب #{order.order_number || order.id}
                 </span>
                 <span className={`text-xs px-2 py-0.5 rounded-full border ${statusInfo.colorClass}`}>
@@ -59,16 +60,12 @@ const OrdersContentPane: React.FC<OrdersContentPaneProps> = ({ themeColors }) =>
         key: ['shop'],
     }); // For currency if needed
 
-    // --- Fetching Orders ---
-    // TODO: Ensure this endpoint fetches orders for the *current customer*
-    // It might need to send an auth token or session ID.
+    const { customer } = useAuth()
     const { data: orders, isLoading: isLoadingOrders, isError, error } = useGetQuery<Order[]>({
-        url: 'orders', // Example customer-specific endpoint
+        url: `orders/phone/${customer?.phone}`, // Example customer-specific endpoint
         key: ['customerOrders'],
         // Add options like polling if you want live updates, or rely on Pusher
     });
-
-    console.log(orders);
     
 
     // Sort orders by date, newest first (assuming placed_at or created_at)
@@ -116,7 +113,7 @@ const OrdersContentPane: React.FC<OrdersContentPaneProps> = ({ themeColors }) =>
 
     return (
         <div className="container mx-auto max-w-2xl px-4 py-6 space-y-4">
-            <h1 className="text-2xl font-bold text-center mb-5" style={{ color: themeColors?.accent_color }}>
+            <h1 className="text-2xl font-bold text-center mb-5" style={{ color: themeColors?.primary_color }}>
                 طلباتي
             </h1>
             {sortedOrders.map((order, index) => (

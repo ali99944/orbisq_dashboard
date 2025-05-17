@@ -15,13 +15,55 @@ interface CartItemProps {
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item, themeColors, onIncreaseQuantity, onDecreaseQuantity, onRemoveItem }) => {
+    console.log(item);
+    
     return (
         <div className="flex items-center justify-between p-2 md:p-3 rounded-lg" style={{ backgroundColor: `${themeColors?.primary_color}10`, border: `1px solid ${themeColors?.primary_color}30`}}>
             <div className="flex items-center gap-2 md:gap-3 flex-grow">
                 <Image src={getImageLink(item.product.image) ?? ''} alt={item.product.name} width={50} height={50} className="rounded-md object-cover w-[50px] h-[50px] md:w-[60px] md:h-[60px]" />
                 <div className="flex-grow">
-                    <h3 className="text-sm md:text-base font-semibold" style={{color: themeColors?.primary_color}}>{item.product.name}</h3>
-                    <p className="text-xs md:text-sm" style={{color: themeColors?.primary_color}}>${((item.product.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</p>
+                    <div className="flex flex-wrap items-baseline gap-x-2">
+                        <h3 className="text-sm md:text-base font-semibold" style={{color: themeColors?.primary_color}}>
+                            {item.product.name}
+                        </h3>
+                        {/* Display required modifier (nullable price) */}
+                        {item.product.selectedModifiers?.find(mod => mod.price_adjustment === null) && (
+                            <span className="text-xs font-medium" style={{color: themeColors?.text_color}}>
+                                {item.product.selectedModifiers.find(mod => mod.price_adjustment === null)?.name}
+                            </span>
+                        )}
+                    </div>
+                    
+                    {/* Display optional extras (non-nullable price) */}
+                    {item.product.selectedModifiers?.some(mod => mod.price_adjustment !== null) && (
+                        <div className="mt-1.5 bg-white/50 rounded-md p-1.5 space-y-1">
+                            {item.product.selectedModifiers
+                                .filter(modifier => modifier.price_adjustment !== null)
+                                .map((modifier, index) => (
+                                    <div key={`modifier-${index}`} className="flex items-center justify-between text-xs px-1">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-1 h-1 rounded-full opacity-60" style={{ backgroundColor: themeColors?.primary_color }} />
+                                            <span style={{color: themeColors?.text_color}}>
+                                                {modifier.name}
+                                            </span>
+                                        </div>
+                                        {(modifier?.price_adjustment ?? 0) > 0 && (
+                                            <span className="font-medium tabular-nums" style={{color: themeColors?.primary_color}}>
+                                                +{(modifier?.price_adjustment ?? 0).toFixed(2)} ج.م
+                                            </span>
+                                        )}
+                                    </div>
+                            ))}
+                        </div>
+                    )}
+                    
+                    <p className="text-xs md:text-sm" style={{color: themeColors?.primary_color}}>
+                        ${(
+                            ((item.product.price ?? 0) + 
+                            (item.selectedModifiers?.reduce((sum, mod) => sum + (mod.price_adjustment ?? 0), 0) ?? 0)) * 
+                            (item.quantity ?? 0)
+                        ).toFixed(2)}
+                    </p>
                 </div>
             </div>
 

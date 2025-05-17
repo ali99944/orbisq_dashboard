@@ -25,7 +25,7 @@ const OrderDetailSheet: React.FC<OrderDetailSheetProps> = ({
 
     if (!order) return null; // Don't render if no order selected
 
-    const statusInfo = formatOrderStatus(order.status);
+    const statusInfo = formatOrderStatus(order.status as unknown as string);
     const currency = shop?.currency_info.currency_code || 'ج';
 
     const formatPrice = (price: number | string | undefined): string => {
