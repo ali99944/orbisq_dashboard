@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Coffee } from 'lucide-react';
 import { Product, Modifier } from '@/src/types/product';
-import { ShopTheme } from '@/src/types/shop';
+import { Shop, ShopTheme } from '@/src/types/shop';
 import { getImageLink } from '@/src/storage';
 import ProductModifiersModal from './product-modifiers-modal';
+import { useGetQuery } from '@/src/hooks/queries-actions';
+import { useParams } from 'next/navigation';
 
 interface MenuItemCardProps {
     item: Product;
@@ -36,6 +38,13 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAddToCart, themeCol
         };
         onAddToCart(productWithModifiers);
     };
+    const params = useParams();
+    const restaurantIdFromParams = params?.id as string;
+    
+    const { data: shop } = useGetQuery<Shop>({
+        url: `/shops/${restaurantIdFromParams}`,
+        key: ['shop']
+    })
     
     return (
         <>
@@ -45,10 +54,10 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAddToCart, themeCol
                     <Image src={getImageLink(item?.image) ?? ''} alt={item.name} layout="fill" objectFit="cover" className={`rounded-t-lg ${!isAvailable ? 'filter grayscale' : ''}`} />
                     {!isAvailable && <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-lg"><span className="text-white font-semibold text-xs px-2 py-1 bg-red-600 rounded">غير متوفر</span></div>}
                 </div>
-                <div className="p-2 md:p-3 flex flex-col flex-grow"> {/* Responsive padding */}
+                <div className="p-2 md:p-3 flex flex-col flex-grow flex-wrap"> {/* Responsive padding */}
                     <h3 className="text-sm md:text-base font-semibold mb-0.5 truncate" style={{ color: themeColors?.primary_color }}>{item.name}</h3>
                     <p className="text-xs md:text-sm text-gray-500 mb-1 truncate" style={{color: themeColors?.text_color, opacity: 0.7}}>{item.name}</p>
-                    <p className="text-base md:text-lg font-bold mb-2" style={{ color: themeColors?.primary_color }}>${(item.price ?? 0).toFixed(2)}</p>
+                    <p className="text-base md:text-lg font-bold mb-2" style={{ color: themeColors?.primary_color }}>{shop?.currency_info.currency_code}{(item.price ?? 0).toFixed(2)}</p>
                     {showAddToCartButton && isAvailable ? (
                         <button 
                             onClick={handleAddToCartClick} 
