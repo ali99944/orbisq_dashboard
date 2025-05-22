@@ -8,12 +8,13 @@ import { getImageLink } from '@/src/storage';
 import ProductModifiersModal from './product-modifiers-modal';
 
 interface MenuItemCardProps {
-    item: Product ;
+    item: Product;
     onAddToCart: (item: Product) => void;
     themeColors: ShopTheme | null;
+    showAddToCartButton?: boolean;
 }
 
-const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAddToCart, themeColors }) => {
+const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAddToCart, themeColors, showAddToCartButton = true }) => {
     const isAvailable = item.is_active;
     const [showModifiersModal, setShowModifiersModal] = useState(false);
     
@@ -48,7 +49,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAddToCart, themeCol
                     <h3 className="text-sm md:text-base font-semibold mb-0.5 truncate" style={{ color: themeColors?.primary_color }}>{item.name}</h3>
                     <p className="text-xs md:text-sm text-gray-500 mb-1 truncate" style={{color: themeColors?.text_color, opacity: 0.7}}>{item.name}</p>
                     <p className="text-base md:text-lg font-bold mb-2" style={{ color: themeColors?.primary_color }}>${(item.price ?? 0).toFixed(2)}</p>
-                    {isAvailable ? (
+                    {showAddToCartButton && isAvailable ? (
                         <button 
                             onClick={handleAddToCartClick} 
                             className="mt-auto w-full flex items-center justify-center gap-2 px-3 py-1.5 md:py-2 rounded-md text-white font-medium text-xs md:text-sm shadow-sm transition-transform duration-150 ease-out active:scale-[0.97]" 
@@ -57,22 +58,24 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAddToCart, themeCol
                         >
                             <Coffee size={14} className="md:w-4 md:h-4" /> أضف للطلب
                         </button>
-                    ) : (
+                    ) : showAddToCartButton && !isAvailable ? (
                         <button disabled className="mt-auto w-full flex items-center justify-center gap-2 px-3 py-1.5 md:py-2 rounded-md text-gray-400 bg-gray-300 font-medium text-xs md:text-sm cursor-not-allowed">
                             <Coffee size={14} className="md:w-4 md:h-4" /> غير متوفر
                         </button>
-                    )}
+                    ) : null}
                 </div>
             </div>
             
             {/* Modifiers Modal */}
-            <ProductModifiersModal 
-                isOpen={showModifiersModal}
-                onClose={() => setShowModifiersModal(false)}
-                product={item}
-                onAddToCart={handleAddWithModifiers}
-                themeColors={themeColors}
-            />
+            {showAddToCartButton && (
+                <ProductModifiersModal 
+                    isOpen={showModifiersModal}
+                    onClose={() => setShowModifiersModal(false)}
+                    product={item}
+                    onAddToCart={handleAddWithModifiers}
+                    themeColors={themeColors}
+                />
+            )}
         </>
     );
 };

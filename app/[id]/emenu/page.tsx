@@ -296,12 +296,18 @@ const EMenuPage: React.FC = () => {
         );
     }
 
+    // Check if all order types are disabled
+    const allOrderTypesDisabled = shop?.business_info && 
+        !shop.business_info.has_delivery && 
+        !shop.business_info.has_takeaway && 
+        !shop.business_info.has_dine_in;
+
     return (
-        <div className="min-h-screen w-full max-w-lg mx-auto flex flex-col relative pb-20" style={{ backgroundColor: themeColors?.background_color }} dir="rtl">
+        <div className={`min-h-screen w-full max-w-lg mx-auto flex flex-col relative ${!allOrderTypesDisabled ? 'pb-20' : 'pb-4'}`} style={{ backgroundColor: themeColors?.background_color }} dir="rtl">
             <EMenuHeader  themeColors={themeColors as ShopTheme | null} displayTableNumber={displayTableNumber} />
 
             <main className="flex-grow p-3 pt-0 overflow-y-auto scrollbar-thin">
-                {activeNavTab === 'menu' && (
+                {(activeNavTab === 'menu' || allOrderTypesDisabled) && (
                     <>
                         <CategoryTabs selectedCategoryId={selectedCategoryId} onSelectCategory={(categoryId) => {
                             handleSelectCategory(categoryId);
@@ -314,11 +320,12 @@ const EMenuPage: React.FC = () => {
                               themeColors={themeColors}
                               searchTerm={searchTerm}
                               onSearchChange={setSearchTerm}
+                              showAddToCartButton={!allOrderTypesDisabled}
                            />
                         </div>
                     </>
                 )}
-                {activeNavTab === 'orders' && (
+                {!allOrderTypesDisabled && activeNavTab === 'orders' && (
                     <div>
                         {
                             customer && (
@@ -342,7 +349,7 @@ const EMenuPage: React.FC = () => {
                         <OrdersContentPane themeColors={shop?.shop_theme as ShopTheme | null} />
                     </div>
                 )}
-                {activeNavTab === 'cart' &&
+                {!allOrderTypesDisabled && activeNavTab === 'cart' &&
                     <CartContentPane
                         cartItems={cart}
                         themeColors={shop?.shop_theme as ShopTheme | null}
@@ -380,7 +387,10 @@ const EMenuPage: React.FC = () => {
                 />
             }
 
-            <BottomNavigationBar activeTab={activeNavTab} onTabChange={setActiveNavTab} cartItemCount={cart.length} themeColors={themeColors} />
+            {/* Only show bottom navigation if at least one order type is enabled */}
+            {!allOrderTypesDisabled && 
+                <BottomNavigationBar activeTab={activeNavTab} onTabChange={setActiveNavTab} cartItemCount={cart.length} themeColors={themeColors} />
+            }
         </div>
     );
 };

@@ -12,6 +12,7 @@ interface MenuContentPaneProps {
     themeColors: ShopTheme | null;
     searchTerm?: string;
     onSearchChange?: (value: string) => void;
+    showAddToCartButton?: boolean;
 }
 
 const MenuContentPane: React.FC<MenuContentPaneProps> = ({ 
@@ -19,7 +20,8 @@ const MenuContentPane: React.FC<MenuContentPaneProps> = ({
     handleAddToCart, 
     themeColors,
     searchTerm = '',
-    onSearchChange = () => {}
+    onSearchChange = () => {},
+    showAddToCartButton = true
 }) => {
     // Filter items based on search term
     const searchFilteredItems = searchTerm
@@ -43,7 +45,13 @@ const MenuContentPane: React.FC<MenuContentPaneProps> = ({
         {searchFilteredItems.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4"> {/* Responsive grid */}
                 {searchFilteredItems.map(item => (
-                    <MenuItemCard key={item.id} item={item} onAddToCart={handleAddToCart} themeColors={themeColors} />
+                    <MenuItemCard 
+                        key={item.id} 
+                        item={item} 
+                        onAddToCart={handleAddToCart} 
+                        themeColors={themeColors} 
+                        showAddToCartButton={showAddToCartButton}
+                    />
                 ))}
             </div>
         ) : (
