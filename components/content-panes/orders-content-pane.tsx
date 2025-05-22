@@ -1,5 +1,5 @@
 // src/components/emenu/content-panes/OrdersContentPane.tsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ListOrdered, Loader2, AlertCircle } from 'lucide-react';
 import { useGetQuery } from '@/src/hooks/queries-actions'; // Adjust path
 import type { Order } from '@/src/types/order'; // Adjust path
@@ -8,6 +8,8 @@ import OrderDetailSheet from './order-details-sheet';
 import { useParams } from 'next/navigation';
 import { Shop, ShopTheme } from '@/src/types/shop';
 import { useAuth } from '@/src/contexts/auth_context';
+import { SOCKET_EVENTS } from '@/src/constants/socket_constants';
+import { useSocket } from '@/src/providers/socket-provider';
 
 interface OrdersContentPaneProps {
     themeColors: ShopTheme | null;
@@ -63,13 +65,32 @@ const OrdersContentPane: React.FC<OrdersContentPaneProps> = ({ themeColors }) =>
     const { customer } = useAuth()
     console.log(customer);
     
-    const { data: orders, isLoading: isLoadingOrders, isError, error } = useGetQuery<Order[]>({
+    const { data: orders, isLoading: isLoadingOrders, isError, error, refetch: refetch_orders } = useGetQuery<Order[]>({
         url: `orders/phone/${customer?.phone}`, // Example customer-specific endpoint
         key: ['customerOrders'],
-        // Add options like polling if you want live updates, or rely on Pusher
     });
 
-    console.log(orders);
+    const { socket } = useSocket()
+
+    useEffect(() => {
+        socket?.on(SOCKET_EVENTS.ORDER_UPDATED, (data) => {
+            const { order, phone_number, shop_id } = data as {
+                order: Order
+                phone_number: string
+                shop_id: number
+            }
+
+            console.log(shop_id);
+            
+
+            if(selectedOrder && selectedOrder?.id == order.id && customer?.phone == phone_number) {
+                setSelectedOrder(null)
+                refetch_orders().then(() => {
+                    setSelectedOrder(order)
+                })
+            }
+        })
+    }, [customer?.phone, refetch_orders, selectedOrder, socket])
     
     
 

@@ -5,7 +5,7 @@ import { Modifier, Product } from "./product";
 import { Shop } from "./shop";
 
 export interface Order {
-  id: string;
+  id: number;
   order_number: string;
   status: OrderStatus;
   customer_id?: number;

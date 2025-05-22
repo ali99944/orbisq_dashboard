@@ -1,4 +1,3 @@
-// src/components/emenu/OrderDetailSheet.tsx
 import React from 'react';
 import { X, Calendar, User, Phone, MapPin, Landmark, ShoppingBag, Receipt, CreditCard, Table } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,8 +21,7 @@ const OrderDetailSheet: React.FC<OrderDetailSheetProps> = ({
     shop,
     themeColors
 }) => {
-
-    if (!order) return null; // Don't render if no order selected
+    if (!order) return null;
 
     const statusInfo = formatOrderStatus(order.status as unknown as string);
     const currency = shop?.currency_info.currency_code || 'ج';
