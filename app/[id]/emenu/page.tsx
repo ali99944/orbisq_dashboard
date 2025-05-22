@@ -171,6 +171,7 @@ const EMenuPage: React.FC = () => {
                         messageLines: ['شكراً لطلبك، ' + name + '.', 'برجاء التوجه للدفع واستلام طلبك.'],
                     });
                     setCart([]);
+                    login(phone, name);
                 }
             })
             
@@ -218,6 +219,7 @@ const EMenuPage: React.FC = () => {
                         messageLines: [`شكراً ${details.name}، طلبك في الطريق إليك.`, `سيتم التواصل معك على الرقم: ${details.phone} قريباً.`]
                     });
                     setCart([]);
+                    login(details.phone, details.name);
                 }
             });
             
