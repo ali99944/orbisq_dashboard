@@ -25,7 +25,7 @@ const EMenuHeader: React.FC<EMenuHeaderProps> = ({ themeColors, displayTableNumb
             <div className="w-14 h-14 md:w-14 md:h-14 flex flex-col items-center justify-center rounded-md" style={{ backgroundColor: themeColors?.primary_color }}>
                 {displayTableNumber != '0' && <span className="text-[10px] md:text-xs leading-tight" style={{ color: themeColors?.accent_color, opacity: 1 }}>طاولة</span>}
                 <span className="font-bold text-xl md:text-2xl leading-tight flex justify-center" style={{ color: themeColors?.accent_color }}>
-                    {displayTableNumber == '0' ? <Image src="/take-away.png" alt="Table" width={40} height={40}  /> : displayTableNumber}
+                    {displayTableNumber == '0' ? <Image src="/restaurant-menu.svg" alt="Table" width={40} height={40}  /> : displayTableNumber}
                 </span>
             </div>
             <div className="flex items-center gap-2 md:gap-3 text-left">
